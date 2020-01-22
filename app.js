@@ -1,6 +1,11 @@
 // Require Libraries
 const express = require('express');
 
+const Tenor = require("tenorjs").client({
+  "Key": "B86RL6029C3O",
+  "Filter": "high",
+  "Locale": "en_US", 
+});
 // App Setup
 const app = express();
 
@@ -12,12 +17,21 @@ app.set('view engine', 'handlebars')
 
 // Routes
 
-app.get('/', (req,res) => {
-  // Console Log
-  console.log(req.query)
-  res.render('home')
+app.get('/', (req, res) => {
+  // Handle the home page when we haven't queried yet
+  term = ""
+  if (req.query.term) {
+      term = req.query.term
+  }
+  // Tenor.search.Query("SEARCH KEYWORD HERE", "LIMIT HERE")
+  Tenor.Search.Query(term, "10")
+      .then(response => {
+          // store the gifs we get back from the search
+          const gifs = response;
+          // pass the gifs as an object into the home page
+          res.render('home', { gifs })
+      }).catch(console.error);
 })
-
 app.get('/greetings/:name', (req, res) => {
   // grab the name from the path provided
   const name = req.params.name;
