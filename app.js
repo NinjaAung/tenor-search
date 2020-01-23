@@ -11,7 +11,7 @@ const app = express();
 
 // Middleware
 const exphbs  = require('express-handlebars');
-
+app.use(express.static('public'));
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars')
 
@@ -38,6 +38,10 @@ app.get('/greetings/:name', (req, res) => {
   // render the greetings view, passing along the name
   res.render('greetings', { name });
 })
+
+app.use(function(req, res, next) {
+  res.status(404).send("Sorry, that route doesn't exist. Have a nice day :)");
+});
 
 // Start Server
 
